@@ -1,5 +1,5 @@
 """
-
+验证用户
 """
 
 from typing import Any
@@ -13,16 +13,14 @@ from common import deps, logger
 from core.config import settings
 from schemas.response import response_code
 from service.sys_user import curd_user
-
+from schemas.request import sys_user_schema
 router = APIRouter()
-
-from fastapi.security import OAuth2PasswordRequestForm
 
 @router.post("/access-token", summary="用户登录认证", name="登录")
 async def login_access_token(
         *,
         db: Session = Depends(deps.get_db),
-        user_info: OAuth2PasswordRequestForm = Depends()
+        user_info: sys_user_schema.UserEmailAuth,
 ) -> Any:
     """
     用户JWT登录
