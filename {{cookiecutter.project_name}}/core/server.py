@@ -19,7 +19,14 @@ from common import custom_exc
 from common.sys_schedule import schedule
 from db.sys_redis import redis_client
 from schemas.response import response_code
+from fastapi import applications
+from fastapi.openapi.docs import get_swagger_ui_html
 
+def swagger_monkey_patch(*args, **kwargs):
+    return get_swagger_ui_html(
+        *args, **kwargs,
+        swagger_js_url="https://cdn.bootcdn.net/ajax/libs/swagger-ui/4.6.2/swagger-ui-bundle.js",
+        swagger_css_url="https://cdn.bootcdn.net/ajax/libs/swagger-ui/4.6.2/swagger-ui.css")
 
 def create_app() -> FastAPI:
     """
@@ -34,6 +41,9 @@ def create_app() -> FastAPI:
         openapi_url=settings.OPENAPI_URL,
         redoc_url=settings.REDOC_URL
     )
+
+    # 更新docs中cdn.jsdelivr.net无法访问的问题
+    applications.get_swagger_ui_html = swagger_monkey_patch
 
     # 其余的一些全局配置可以写在这里 多了可以考虑拆分到其他文件夹
 
